@@ -13,7 +13,7 @@
 // Debian target. Servo's Ubuntu-only extra (libgstreamer-plugins-good1.0-dev)
 // is omitted — add it on Ubuntu if the build complains.
 
-// Type-only import — erased at eval time, so the Deno sidecar needs no module
+// Type-only import — erased at eval time, so the evaluator needs no module
 // resolution; it buys the typed `ZapBuilder` for authoring.
 import type {ZapBuilder} from '@fuzdev/zap/zap.ts';
 
