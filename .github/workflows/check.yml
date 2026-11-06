@@ -1,0 +1,60 @@
+# Checks what can be checked without building Servo.
+#
+# One job, `check`: rustfmt over the crate's sources, a syntax check of the
+# shell scripts, and a byte-compile of the login-workaround proxy. It does not
+# build, lint, or test the crate. Servo is a git dependency compiled from
+# source (SpiderMonkey, WebRender, stylo), which is too slow and too large for
+# a per-push lane, so clippy and the tests are run locally (CLAUDE.md §
+# Commands). `cargo fmt` reads the workspace without resolving dependencies,
+# so it fetches nothing.
+
+name: check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: ['**']
+  # Allow manually re-running the check from the Actions tab.
+  workflow_dispatch:
+
+# Cancel a PR's in-progress run when a new commit supersedes it; let main-branch
+# runs finish so every push to main stays verified. Note that is per *push*, not
+# per commit: a push of several commits is checked at its tip only.
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+# Least privilege: the checks only read the repo.
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      # persist-credentials: false keeps the GITHUB_TOKEN out of .git/config (no step here pushes via git).
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      # The toolchain is pinned in rust-toolchain.toml, not `stable`, so the
+      # rustfmt here is the one local `cargo fmt` runs. The runner's
+      # preinstalled rustup installs that toolchain and its components; any
+      # rustup 1.28+ reads the file with no arguments, so skip self-updating it.
+      - name: Install Rust
+        run: |
+          rustup toolchain install --no-self-update
+          rustup show active-toolchain
+          rustfmt --version
+
+      - name: Format
+        run: cargo fmt --check
+
+      - name: Scripts
+        run: |
+          sh -n scripts/audit_daemon.sh
+          sh -n scripts/servo_gap_sites.sh
+          python3 -m py_compile scripts/strip_secure_proxy.py

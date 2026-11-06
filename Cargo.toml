@@ -1,0 +1,63 @@
+[workspace]
+resolver = "2"
+members = ["crates/zervo"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "0BSD"
+publish = false
+repository = "https://github.com/fuzdev/zervo"
+
+[workspace.dependencies]
+# --- The web engine (the load-bearing bet) ---
+# The embedding crate is `servo` (git-only; no semver release). Tracking
+# `main` for "the latest"; Cargo.lock pins the resolved commit for
+# reproducibility. Budget for API churn — Servo's embedding surface still moves.
+#
+# Version-alignment note: the seam to Servo is `raw-window-handle` types
+# (WindowRenderingContext::new takes DisplayHandle/WindowHandle, not winit's
+# Window), so winit's version is independent of Servo's — only
+# raw-window-handle must unify with Servo's (caret "0.6" handles that).
+servo = { git = "https://github.com/servo/servo", branch = "main" }
+
+# --- Windowing (Wayland target) ---
+winit = "0.30"
+raw-window-handle = "0.6"
+
+# --- Misc ---
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+[workspace.lints.rust]
+# `warn`, not `forbid`: embedding a web engine over raw window handles may
+# need `unsafe`. Keep each use visible and justify it at the use site.
+unsafe_code = "warn"
+missing_debug_implementations = "warn"
+trivial_casts = "warn"
+trivial_numeric_casts = "warn"
+unused_lifetimes = "warn"
+unused_qualifications = "warn"
+
+[workspace.lints.clippy]
+all = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+nursery = { level = "warn", priority = -1 }
+
+# Pedantic overrides
+module_name_repetitions = "allow"
+must_use_candidate = "allow"
+similar_names = "allow"
+too_many_lines = "allow"
+
+# Restriction lints (panic points need explicit #[allow] with justification)
+dbg_macro = "warn"
+expect_used = "warn"
+panic = "warn"
+todo = "warn"
+unwrap_used = "warn"
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true

@@ -1,0 +1,7 @@
+# Pinned because clippy's nursery lints are warn-level and the clippy gate
+# denies warnings — a floating toolchain would break the gate on new lints.
+# Keep it at or above the channel the locked Servo revision pins in its own
+# rust-toolchain.toml (docs/compat.md § Bumping the Servo pin).
+[toolchain]
+channel = "1.99.1"
+components = ["rustfmt", "clippy"]
