@@ -1,6 +1,6 @@
 # Zervo
 
-> native Zzz using Servo (experimental)
+> native Zzz window host using Servo (experimental)
 
 **Binary**: `zervo` (`crates/zervo`) | **Target**: Linux on Wayland |
 **Status**: an experiment, not ready for use

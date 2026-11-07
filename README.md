@@ -1,6 +1,6 @@
 # Zervo
 
-> native [Zzz](https://github.com/fuzdev/zzz) using [Servo](https://servo.org) (experimental)
+> native [Zzz](https://github.com/fuzdev/zzz) window host using [Servo](https://servo.org) (experimental)
 
 **Zervo is an experiment.** It isn't ready for use: Zzz works in a browser,
 and Zervo renders it with known gaps. The question it answers is whether Servo
