@@ -80,6 +80,8 @@ crates/zervo/   the binary: winit window, Servo embedding, input mapping
 docs/compat.md  known gaps, the Servo pin-bump procedure, a walk-through
 scripts/        the compat audit harness
 zap.ts          Servo's build toolchain
+zap.lock        pins the fgro build that evaluates zap.ts
+package.json    marks zap.ts's project for Zap (nothing to install)
 ```
 
 ## Contributing

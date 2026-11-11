@@ -32,6 +32,8 @@ crates/zervo/src/
 docs/compat.md      # known gaps, rebuilding, bumping the Servo pin, the walk-through
 scripts/            # the compat audit harness
 zap.ts              # Servo's build toolchain (Debian packages)
+zap.lock            # pins the fgro build that evaluates zap.ts (`zap lock` writes it)
+package.json        # marks zap.ts's project for Zap; nothing to install
 ```
 
 The module docs (`//!`) are the detail; update them with the code.
